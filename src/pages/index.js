@@ -18,8 +18,8 @@ export default function Home() {
   const [siteSearch, setSiteSearch] = useState("MELI");
   const [category, setCategory] = useState("Cellphones");
   const [products, setProducts] = useState([]);
-  const [pageLoading, setPageLoading] = useState(false);
-
+  const [pageLoading, setPageLoading] = useState(undefined);
+  console.log(pageLoading);
   /**
    * Retrieves products from the specified category and updates the state with the result.
    * @param {string} category_id - The ID of the category from which to retrieve the products.
@@ -38,11 +38,9 @@ export default function Home() {
           category_id = TVMELI;
           break;
       }
-      setPageLoading(true);
-      getProductsByCategoryMELI(category_id).then((result) =>
+      getProductsByCategoryMELI(category_id, setPageLoading).then((result) =>
         setProducts(result)
       );
-      setPageLoading(false);
     } else setProducts([]);
   }, [siteSearch, category]);
 
@@ -75,50 +73,53 @@ export default function Home() {
   const handleSelectSite = (value) => setSiteSearch(value);
   const handleSelectCategory = (value) => setCategory(value);
   return (
-    <div>
-      <Head>
-        <title>Gavafue - Free Market</title>
-        <link rel="icon" href="/favicon.ico" />
-      </Head>
+    <>
+      <div>
+        <Head>
+          <title>Gavafue - Free Market</title>
+          <link rel="icon" href="/favicon.ico" />
+        </Head>
 
-      <AntdLayout>
-        <div className={styles.menu}>
-          <AntdSelect
-            value={category}
-            handleChange={handleSelectCategory}
-            options={categoriesSelect}
-          />
-          <AntdSelect
-            handleChange={handleSelectSite}
-            value={siteSearch}
-            options={siteSelect}
-          />
-          <SearchBox />
-        </div>
+        <AntdLayout>
+          <div className={styles.menu}>
+            <AntdSelect
+              value={category}
+              handleChange={handleSelectCategory}
+              options={categoriesSelect}
+            />
+            <AntdSelect
+              handleChange={handleSelectSite}
+              value={siteSearch}
+              options={siteSelect}
+            />
+            <SearchBox />
+          </div>
 
-        <div>
-          <h2>{category}</h2>
-          <Row gutter={[16, 16]}>
-            {products?.map((product) => {
-              return (
-                <Col key={product.id} span={6}>
-                  <AntdCard
-                    product={{
-                      productId: product.id,
-                      title: product.title,
-                      price: `$ ${product.price}`,
-                      thumbnail: product.thumbnail,
-                      category_id: product.category_id,
-                      permalink: product.permalink,
-                    }}
-                  />
-                </Col>
-              );
-            })}
-          </Row>
-        </div>
-      </AntdLayout>
+          <div>
+            <h2>{category}</h2>
+            <Row gutter={[16, 16]}>
+              {products?.map((product) => {
+                return (
+                  <Col key={product.id} span={6}>
+                    <AntdCard
+                      site={siteSearch}
+                      product={{
+                        productId: product.id,
+                        title: product.title,
+                        price: `$ ${product.currency_id} ${product.price}`,
+                        thumbnail: product.thumbnail,
+                        category_id: product.category_id,
+                        permalink: product.permalink,
+                      }}
+                    />
+                  </Col>
+                );
+              })}
+            </Row>
+          </div>
+        </AntdLayout>
+      </div>
       {pageLoading && <Spinner />}
-    </div>
+    </>
   );
 }
