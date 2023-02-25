@@ -7,10 +7,10 @@ import {
 } from "@/pages/endpointsAPI/MELI";
 import { Button } from "antd";
 import Image from "next/legacy/image";
-const ProductCard = ({ product, site }) => {
+const ProductCard = ({ product }) => {
   const [productDescription, setProductDescription] = useState("");
 
-  const { title, price, category_id, permalink, productId, thumbnail } =
+  const { title, price, category_id, permalink, productId, thumbnail, site } =
     product;
   useEffect(() => {
     if (site === "MELI") {

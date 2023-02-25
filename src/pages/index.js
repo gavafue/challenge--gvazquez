@@ -13,13 +13,14 @@ import {
   getProductsByCategoryMELI,
 } from "./endpointsAPI/MELI";
 import Spinner from "@/components/Spinner";
+import dbConnect from "./api/dataBaseConection";
+import Search from "../models/Search";
 
 export default function Home() {
   const [siteSearch, setSiteSearch] = useState("MELI");
   const [category, setCategory] = useState("Cellphones");
   const [products, setProducts] = useState([]);
   const [pageLoading, setPageLoading] = useState(undefined);
-  console.log(pageLoading);
   /**
    * Retrieves products from the specified category and updates the state with the result.
    * @param {string} category_id - The ID of the category from which to retrieve the products.
@@ -110,6 +111,7 @@ export default function Home() {
                         thumbnail: product.thumbnail,
                         category_id: product.category_id,
                         permalink: product.permalink,
+                        site: siteSearch,
                       }}
                     />
                   </Col>
@@ -122,4 +124,15 @@ export default function Home() {
       {pageLoading && <Spinner />}
     </>
   );
+}
+export async function getServerSideProps() {
+  try {
+    await dbConnect();
+    const res = await Search.find({});
+    console.log("resultados db", res);
+    return { props: { Search: 123 } };
+  } catch (error) {
+    console.log("error", error);
+    return { props: {} }; // added return statement here to ensure something is returned even if an error occurs
+  }
 }
