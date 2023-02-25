@@ -4,21 +4,21 @@ import AntdSelect from "../components/AntdSelect";
 import SearchBox from "../components/SearchBox";
 import { Col, Row } from "antd";
 import styles from "../styles/menuSearch.module.css";
-import axios from "axios";
 import { useState, useEffect } from "react";
 import AntdCard from "../components/AntdCard";
 import {
   cellphonesMELI,
   refrigeratorMELI,
   TVMELI,
-  MELICategoriesLink,
   getProductsByCategoryMELI,
 } from "./endpointsAPI/MELI";
+import Spinner from "@/components/Spinner";
 
 export default function Home() {
   const [siteSearch, setSiteSearch] = useState("MELI");
-  const [category, setCategory] = useState("cellphones");
+  const [category, setCategory] = useState("Cellphones");
   const [products, setProducts] = useState([]);
+  const [pageLoading, setPageLoading] = useState(false);
 
   /**
    * Retrieves products from the specified category and updates the state with the result.
@@ -28,28 +28,31 @@ export default function Home() {
     if (siteSearch === "MELI") {
       let category_id;
       switch (category) {
-        case "cellphones":
+        case "Cellphones":
           category_id = cellphonesMELI;
           break;
-        case "refrigerator":
+        case "Refrigerator":
           category_id = refrigeratorMELI;
           break;
         case "TV":
           category_id = TVMELI;
           break;
       }
+      setPageLoading(true);
       getProductsByCategoryMELI(category_id).then((result) =>
         setProducts(result)
       );
+      setPageLoading(false);
     } else setProducts([]);
   }, [siteSearch, category]);
+
   const categoriesSelect = [
     {
-      value: "cellphones",
+      value: "Cellphones",
       label: "Cellphones",
     },
     {
-      value: "refrigerator",
+      value: "Refrigerator",
       label: "Refrigerator",
     },
     {
@@ -57,6 +60,7 @@ export default function Home() {
       label: "TV",
     },
   ];
+
   const siteSelect = [
     {
       value: "MELI",
@@ -93,7 +97,7 @@ export default function Home() {
         </div>
 
         <div>
-          <h1>Cell Phones</h1>
+          <h2>{category}</h2>
           <Row gutter={[16, 16]}>
             {products?.map((product) => {
               return (
@@ -114,6 +118,7 @@ export default function Home() {
           </Row>
         </div>
       </AntdLayout>
+      {pageLoading && <Spinner />}
     </div>
   );
 }
