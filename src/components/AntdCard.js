@@ -1,26 +1,24 @@
 import React from "react";
 import { Card } from "antd";
 import { useEffect, useState } from "react";
-import axios from "axios";
+import {
+  getDescriptionProductMELI,
+  getImageProductMELI,
+} from "@/pages/endpointsAPI/MELI";
 import { Button } from "antd";
-import Image from "next/image";
+import Image from "next/legacy/image";
 const ProductCard = ({ product }) => {
   const [productDescription, setProductDescription] = useState("");
-  const { title, price, thumbnail, category_id, permalink, productId } =
+
+  const { title, price, category_id, permalink, productId, thumbnail, site } =
     product;
   useEffect(() => {
-    const fetchDescription = async () => {
-      try {
-        const response = await axios.get(
-          `https://api.mercadolibre.com/items/${productId}/description`
-        );
-        setProductDescription(response.data.plain_text);
-      } catch (error) {
-        console.error(error);
-      }
-    };
-    fetchDescription();
-  }, [productId]);
+    if (site === "MELI") {
+      getDescriptionProductMELI(productId).then((result) =>
+        setProductDescription(result)
+      );
+    }
+  }, [productId, site]);
   return (
     <Card
       hoverable
@@ -28,8 +26,8 @@ const ProductCard = ({ product }) => {
         <Image
           src={thumbnail}
           alt={`Image from ${title}`}
-          width={800}
-          height={600}
+          width={200}
+          height={200}
           layout="responsive"
           sizes="(max-width: 600px) 100vw, (max-width: 1200px) 50vw, 800px"
           srcSet={thumbnail}
@@ -40,7 +38,9 @@ const ProductCard = ({ product }) => {
       <div>Category: {category_id}</div>
       <div>Price: {price}</div>
       <div className="descriptionCard">Description: {productDescription}</div>
-      <Button block href={permalink}>Go to product</Button>
+      <Button block href={permalink}>
+        Go to product
+      </Button>
     </Card>
   );
 };

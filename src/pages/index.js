@@ -4,69 +4,135 @@ import AntdSelect from "../components/AntdSelect";
 import SearchBox from "../components/SearchBox";
 import { Col, Row } from "antd";
 import styles from "../styles/menuSearch.module.css";
-import axios from "axios";
 import { useState, useEffect } from "react";
 import AntdCard from "../components/AntdCard";
-
-const getProducts = async () => {
-  try {
-    const response = await axios.get(
-      "https://api.mercadolibre.com/sites/MLA/search?category=MLA1055"
-    );
-    return response.data.results;
-  } catch (error) {
-    console.error(error);
-    return [];
-  }
-};
+import {
+  cellphonesMELI,
+  refrigeratorMELI,
+  TVMELI,
+  getProductsByCategoryMELI,
+} from "./endpointsAPI/MELI";
+import Spinner from "@/components/Spinner";
+import dbConnect from "./api/dataBaseConection";
+import Search from "../models/Search";
 
 export default function Home() {
+  const [siteSearch, setSiteSearch] = useState("MELI");
+  const [category, setCategory] = useState("Cellphones");
   const [products, setProducts] = useState([]);
-
+  const [pageLoading, setPageLoading] = useState(undefined);
+  /**
+   * Retrieves products from the specified category and updates the state with the result.
+   * @param {string} category_id - The ID of the category from which to retrieve the products.
+   */
   useEffect(() => {
-    const fetchProducts = async () => {
-      const products = await getProducts();
-      setProducts(products);
-    };
-    fetchProducts();
-  }, []);
+    if (siteSearch === "MELI") {
+      let category_id;
+      switch (category) {
+        case "Cellphones":
+          category_id = cellphonesMELI;
+          break;
+        case "Refrigerator":
+          category_id = refrigeratorMELI;
+          break;
+        case "TV":
+          category_id = TVMELI;
+          break;
+      }
+      getProductsByCategoryMELI(category_id, setPageLoading).then((result) =>
+        setProducts(result)
+      );
+    } else setProducts([]);
+  }, [siteSearch, category]);
+
+  const categoriesSelect = [
+    {
+      value: "Cellphones",
+      label: "Cellphones",
+    },
+    {
+      value: "Refrigerator",
+      label: "Refrigerator",
+    },
+    {
+      value: "TV",
+      label: "TV",
+    },
+  ];
+
+  const siteSelect = [
+    {
+      value: "MELI",
+      label: "Free Market",
+    },
+    {
+      value: "BUSCAPE",
+      label: "Buscapé",
+    },
+  ];
+
+  const handleSelectSite = (value) => setSiteSearch(value);
+  const handleSelectCategory = (value) => setCategory(value);
   return (
-    <div>
-      <Head>
-        <title>Gavafue - Free Market</title>
-        <link rel="icon" href="/favicon.ico" />
-      </Head>
+    <>
+      <div>
+        <Head>
+          <title>Gavafue - Free Market</title>
+          <link rel="icon" href="/favicon.ico" />
+        </Head>
 
-      <AntdLayout>
-        <div className={styles.menu}>
-          <AntdSelect options={["Mobile", "Refrigerator", "TV"]} />
-          <AntdSelect options={["Mercado Libre", "Buscapé"]} />
-          <SearchBox />
-        </div>
+        <AntdLayout>
+          <div className={styles.menu}>
+            <AntdSelect
+              value={category}
+              handleChange={handleSelectCategory}
+              options={categoriesSelect}
+            />
+            <AntdSelect
+              handleChange={handleSelectSite}
+              value={siteSearch}
+              options={siteSelect}
+            />
+            <SearchBox />
+          </div>
 
-        <div>
-          <h1>Cell Phones</h1>
-          <Row gutter={[16, 16]}>
-            {products.map((product) => {
-              console.log(product);
-              return (
-                <Col key={product.id} span={6}>
-                  <AntdCard
-                    product={{
-                      productId: product.id,
-                      title: product.title,
-                      price: `$ ${product.price}`,
-                      thumbnail: product.thumbnail,
-                      category_id: product.category_id,
-                      permalink: product.permalink,
-                    }}
-                  />
-                </Col>
-              );
-            })}
-          </Row>
-        </div>
-      </AntdLayout>
-    </div>
+          <div>
+            <h2>{category}</h2>
+            <Row gutter={[16, 16]}>
+              {products?.map((product) => {
+                return (
+                  <Col key={product.id} span={6}>
+                    <AntdCard
+                      site={siteSearch}
+                      product={{
+                        productId: product.id,
+                        title: product.title,
+                        price: `$ ${product.currency_id} ${product.price}`,
+                        thumbnail: product.thumbnail,
+                        category_id: product.category_id,
+                        permalink: product.permalink,
+                        site: siteSearch,
+                      }}
+                    />
+                  </Col>
+                );
+              })}
+            </Row>
+          </div>
+        </AntdLayout>
+      </div>
+      {pageLoading && <Spinner />}
+    </>
   );
+}
+export async function getServerSideProps() {
+  try {
+    await dbConnect();
+    const res = await Search.find({});
+    console.log("resultados db", res);
+    return { props: { Search: 123 } };
+  } catch (error) {
+    console.log("error", error);
+    return { props: {} }; // added return statement here to ensure something is returned even if an error occurs
+  }
 }
