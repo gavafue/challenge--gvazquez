@@ -7,29 +7,69 @@ import styles from "../styles/menuSearch.module.css";
 import axios from "axios";
 import { useState, useEffect } from "react";
 import AntdCard from "../components/AntdCard";
-
-const getProducts = async () => {
-  try {
-    const response = await axios.get(
-      "https://api.mercadolibre.com/sites/MLA/search?category=MLA1055"
-    );
-    return response.data.results;
-  } catch (error) {
-    console.error(error);
-    return [];
-  }
-};
+import {
+  cellphonesMELI,
+  refrigeratorMELI,
+  TVMELI,
+  MELICategoriesLink,
+  getProductsByCategoryMELI,
+} from "./endpointsAPI/MELI";
 
 export default function Home() {
+  const [siteSearch, setSiteSearch] = useState("MELI");
+  const [category, setCategory] = useState("cellphones");
   const [products, setProducts] = useState([]);
 
+  /**
+   * Retrieves products from the specified category and updates the state with the result.
+   * @param {string} category_id - The ID of the category from which to retrieve the products.
+   */
   useEffect(() => {
-    const fetchProducts = async () => {
-      const products = await getProducts();
-      setProducts(products);
-    };
-    fetchProducts();
-  }, []);
+    if (siteSearch === "MELI") {
+      let category_id;
+      switch (category) {
+        case "cellphones":
+          category_id = cellphonesMELI;
+          break;
+        case "refrigerator":
+          category_id = refrigeratorMELI;
+          break;
+        case "TV":
+          category_id = TVMELI;
+          break;
+      }
+      getProductsByCategoryMELI(category_id).then((result) =>
+        setProducts(result)
+      );
+    } else setProducts([]);
+  }, [siteSearch, category]);
+  const categoriesSelect = [
+    {
+      value: "cellphones",
+      label: "Cellphones",
+    },
+    {
+      value: "refrigerator",
+      label: "Refrigerator",
+    },
+    {
+      value: "TV",
+      label: "TV",
+    },
+  ];
+  const siteSelect = [
+    {
+      value: "MELI",
+      label: "Free Market",
+    },
+    {
+      value: "BUSCAPE",
+      label: "Buscapé",
+    },
+  ];
+
+  const handleSelectSite = (value) => setSiteSearch(value);
+  const handleSelectCategory = (value) => setCategory(value);
   return (
     <div>
       <Head>
@@ -39,16 +79,23 @@ export default function Home() {
 
       <AntdLayout>
         <div className={styles.menu}>
-          <AntdSelect options={["Mobile", "Refrigerator", "TV"]} />
-          <AntdSelect options={["Mercado Libre", "Buscapé"]} />
+          <AntdSelect
+            value={category}
+            handleChange={handleSelectCategory}
+            options={categoriesSelect}
+          />
+          <AntdSelect
+            handleChange={handleSelectSite}
+            value={siteSearch}
+            options={siteSelect}
+          />
           <SearchBox />
         </div>
 
         <div>
           <h1>Cell Phones</h1>
           <Row gutter={[16, 16]}>
-            {products.map((product) => {
-              console.log(product);
+            {products?.map((product) => {
               return (
                 <Col key={product.id} span={6}>
                   <AntdCard
