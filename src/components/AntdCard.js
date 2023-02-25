@@ -40,7 +40,7 @@ const ProductCard = ({ product }) => {
       <div>Category: {category_id}</div>
       <div>Price: {price}</div>
       <div className="descriptionCard">Description: {productDescription}</div>
-      <Button href={permalink}>Go to product</Button>
+      <Button block href={permalink}>Go to product</Button>
     </Card>
   );
 };

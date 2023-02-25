@@ -55,7 +55,7 @@ export default function Home() {
                     product={{
                       productId: product.id,
                       title: product.title,
-                      price: product.price,
+                      price: `$ ${product.price}`,
                       thumbnail: product.thumbnail,
                       category_id: product.category_id,
                       permalink: product.permalink,
