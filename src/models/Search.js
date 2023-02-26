@@ -4,11 +4,7 @@ const searchSchema = new mongoose.Schema({
     type: String,
     required: [true, "Please insert a search input value"],
   },
-  platform: {
-    type: String,
-    required: [true, "Please insert a platform"],
-  },
-  results: {
+  searchListResults: {
     type: Array,
     required: [true, "Results is required"],
   },

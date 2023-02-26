@@ -1,10 +1,7 @@
 import React from "react";
 import { Card } from "antd";
 import { useEffect, useState } from "react";
-import {
-  getDescriptionProductMELI,
-  getImageProductMELI,
-} from "@/pages/endpointsAPI/MELI";
+import { getDescriptionProductMELI } from "@/lib/MELIendpointsAPI";
 import { Button } from "antd";
 import Image from "next/legacy/image";
 const ProductCard = ({ product }) => {
