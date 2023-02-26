@@ -1,36 +1,47 @@
+// Import the Head component from Next.js
 import Head from "next/head";
+
+// Import custom components
 import AntdLayout from "../components/AntdLayout";
 import AntdSelect from "../components/AntdSelect";
 import SearchBox from "../components/SearchBox";
-import { Col, Row } from "antd";
-import styles from "../styles/menuSearch.module.css";
-import { useState, useEffect } from "react";
 import AntdCard from "../components/AntdCard";
+import Spinner from "@/components/Spinner";
+
+// Import Ant Design components
+import { Col, Row } from "antd";
+import { Card } from "antd";
+import { DeleteOutlined } from "@ant-design/icons";
+
+// Import custom functions
 import {
   getProductsByCategoryMELI,
   cellphonesMELI,
   refrigeratorMELI,
   TVMELI,
 } from "../lib/MELIendpointsAPI";
-import Spinner from "@/components/Spinner";
 import dbConnect from "./api/dataBaseConection";
 import Search from "../models/Search";
-import { Card } from "antd";
-import { DeleteOutlined } from "@ant-design/icons";
 
+// Import React hooks
+import { useState, useEffect } from "react";
+
+// Import CSS styles
+import styles from "../styles/menuSearch.module.css";
+
+// Define the Home component
 export default function Home() {
-  const [siteSearch, setSiteSearch] = useState("default");
-  const [category, setCategory] = useState("default");
-  const [products, setProducts] = useState([]);
-  const [pageLoading, setPageLoading] = useState(undefined);
+  // Define state variables for the search form
+  const [siteSearch, setSiteSearch] = useState("");
+  const [category, setCategory] = useState("");
   const [searchValue, setSearchValue] = useState("");
   const [headerOfProducts, setHeaderOfProducts] = useState("");
-  console.log(products);
-  /**
-   * Retrieves products from the specified category and updates the state with the result.
-   * @param {string} category_id - The ID of the category from which to retrieve the products.
-   */
 
+  // Define state variables for the product list
+  const [products, setProducts] = useState([]);
+  const [pageLoading, setPageLoading] = useState(undefined);
+
+  // Define a function to retrieve products from the specified category
   const updateProductList = async (category_id) => {
     try {
       setPageLoading(true);
@@ -43,6 +54,7 @@ export default function Home() {
     }
   };
 
+  // Define an effect to update the product list when the site or category changes
   useEffect(() => {
     if (siteSearch === "MELI") {
       let category_id;
@@ -61,8 +73,8 @@ export default function Home() {
     } else setProducts([]);
   }, [siteSearch, category]);
 
+  // Define options for the category and site select inputs
   const categoriesSelect = [
-    { value: "default", label: "Category", disabled: true },
     {
       value: "Cellphones",
       label: "Cellphones",
@@ -78,7 +90,6 @@ export default function Home() {
   ];
 
   const siteSelect = [
-    { value: "default", label: "Platform", disabled: true },
     {
       value: "MELI",
       label: "Free Market",
@@ -86,9 +97,11 @@ export default function Home() {
     {
       value: "BUSCAPE",
       label: "Buscapé",
+      disabled: true,
     },
   ];
 
+  // Define event handlers for the category and site select inputs
   const handleSelectSite = (value) => {
     setSiteSearch(value);
     setSearchValue("");
@@ -109,12 +122,14 @@ export default function Home() {
         <AntdLayout>
           <div className={styles.menu}>
             <AntdSelect
+              placeholder={"Select a category"}
               className={styles.select}
               value={category}
               handleChange={handleSelectCategory}
               options={categoriesSelect}
             />
             <AntdSelect
+              placeholder={"Select a site"}
               className={styles.select}
               handleChange={handleSelectSite}
               value={siteSearch}
@@ -131,7 +146,7 @@ export default function Home() {
               setProducts={setProducts}
             />
             <DeleteOutlined
-            className={styles.removeButton}
+              className={styles.removeButton}
               style={{
                 lineHeight: "100%",
                 fontSize: "20px",
@@ -139,8 +154,8 @@ export default function Home() {
               }}
               onClick={() => {
                 setProducts([]);
-                setCategory("default");
-                setSiteSearch("default");
+                setCategory("");
+                setSiteSearch("");
               }}
             />
           </div>
@@ -180,13 +195,22 @@ export default function Home() {
     </>
   );
 }
+/**
+This function retrieves data from the server-side before rendering the component.
+It connects to the database and retrieves all data from the "Search" collection.
+@returns {object} An object containing the "Search" data as a prop.
+*/
 export async function getServerSideProps() {
   try {
+    // Connect to the database
     await dbConnect();
+    // Retrieve data from the "Search" collection
     const res = await Search.find({});
-    return { props: { Search: 123 } };
+    // Return the "Search" data as a prop
+    return { props: { Search: JSON.stringify(res) } };
   } catch (error) {
-    console.log("error", error);
-    return { props: {} }; // added return statement here to ensure something is returned even if an error occurs
+    // Log any errors that occur and return an empty object to ensure something is returned even if an error occurs
+    console.log("Error:", error);
+    return { props: {} };
   }
 }

@@ -11,11 +11,21 @@ component with options mapped from the array.
 @returns {JSX.Element} - A Select component from Ant Design library with options mapped 
                         from the options array.
 */
-const AntdSelect = ({ options, value, handleChange, className }) => {
+const AntdSelect = ({
+  options,
+  value,
+  handleChange,
+  className,
+  placeholder,
+  showSearch,
+}) => {
   return (
     <Select
+      style={{ width: 200 }}
+      showSearch={showSearch && showSearch}
       className={className}
-      value={value}
+      value={value || undefined}
+      placeholder={placeholder && placeholder}
       onChange={handleChange && handleChange}
       options={
         options &&
