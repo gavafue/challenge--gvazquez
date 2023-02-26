@@ -26,16 +26,13 @@ const dbConnect = async () => {
   }
 
   if (!cached.promise) {
-    console.log("MongoDB connected");
     cached.promise = mongoose.connect(MONGODB_URI).then((mongoose) => {
       return mongoose;
     });
   }
   cached.conn = await cached.promise;
+  console.log("MongoDB connected");
   return cached.conn;
 };
 
 export default dbConnect;
-// export default function handler(req, res) {
-//   res.status(200).json({ name: "John Doe" });
-// }
