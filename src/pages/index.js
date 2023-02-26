@@ -7,11 +7,11 @@ import styles from "../styles/menuSearch.module.css";
 import { useState, useEffect } from "react";
 import AntdCard from "../components/AntdCard";
 import {
+  getProductsByCategoryMELI,
   cellphonesMELI,
   refrigeratorMELI,
   TVMELI,
-  getProductsByCategoryMELI,
-} from "./endpointsAPI/MELI";
+} from "../lib/MELIendpointsAPI";
 import Spinner from "@/components/Spinner";
 import dbConnect from "./api/dataBaseConection";
 import Search from "../models/Search";
@@ -25,6 +25,18 @@ export default function Home() {
    * Retrieves products from the specified category and updates the state with the result.
    * @param {string} category_id - The ID of the category from which to retrieve the products.
    */
+  const updateProductList = async (category_id) => {
+    try {
+      setPageLoading(true);
+      const result = await getProductsByCategoryMELI(category_id);
+      setProducts(result);
+    } catch (error) {
+      console.log(error);
+    } finally {
+      setPageLoading(false);
+    }
+  };
+
   useEffect(() => {
     if (siteSearch === "MELI") {
       let category_id;
@@ -39,9 +51,7 @@ export default function Home() {
           category_id = TVMELI;
           break;
       }
-      getProductsByCategoryMELI(category_id, setPageLoading).then((result) =>
-        setProducts(result)
-      );
+      updateProductList(category_id);
     } else setProducts([]);
   }, [siteSearch, category]);
 
