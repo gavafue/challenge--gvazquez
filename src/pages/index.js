@@ -15,23 +15,29 @@ import {
 import Spinner from "@/components/Spinner";
 import dbConnect from "./api/dataBaseConection";
 import Search from "../models/Search";
+import { Card } from "antd";
+import { DeleteOutlined } from "@ant-design/icons";
 
 export default function Home() {
-  const [siteSearch, setSiteSearch] = useState("MELI");
-  const [category, setCategory] = useState("Cellphones");
+  const [siteSearch, setSiteSearch] = useState("default");
+  const [category, setCategory] = useState("default");
   const [products, setProducts] = useState([]);
   const [pageLoading, setPageLoading] = useState(undefined);
+  const [searchValue, setSearchValue] = useState("");
+  const [headerOfProducts, setHeaderOfProducts] = useState("");
+  console.log(products);
   /**
    * Retrieves products from the specified category and updates the state with the result.
    * @param {string} category_id - The ID of the category from which to retrieve the products.
    */
+
   const updateProductList = async (category_id) => {
     try {
       setPageLoading(true);
       const result = await getProductsByCategoryMELI(category_id);
       setProducts(result);
     } catch (error) {
-      console.log(error);
+      console.error(error);
     } finally {
       setPageLoading(false);
     }
@@ -56,6 +62,7 @@ export default function Home() {
   }, [siteSearch, category]);
 
   const categoriesSelect = [
+    { value: "default", label: "Category", disabled: true },
     {
       value: "Cellphones",
       label: "Cellphones",
@@ -71,6 +78,7 @@ export default function Home() {
   ];
 
   const siteSelect = [
+    { value: "default", label: "Platform", disabled: true },
     {
       value: "MELI",
       label: "Free Market",
@@ -81,8 +89,15 @@ export default function Home() {
     },
   ];
 
-  const handleSelectSite = (value) => setSiteSearch(value);
-  const handleSelectCategory = (value) => setCategory(value);
+  const handleSelectSite = (value) => {
+    setSiteSearch(value);
+    setSearchValue("");
+  };
+  const handleSelectCategory = (value) => {
+    setCategory(value);
+    setSearchValue("");
+    setHeaderOfProducts(value);
+  };
   return (
     <>
       <div>
@@ -94,20 +109,50 @@ export default function Home() {
         <AntdLayout>
           <div className={styles.menu}>
             <AntdSelect
+              className={styles.select}
               value={category}
               handleChange={handleSelectCategory}
               options={categoriesSelect}
             />
             <AntdSelect
+              className={styles.select}
               handleChange={handleSelectSite}
               value={siteSearch}
               options={siteSelect}
             />
-            <SearchBox />
+            <SearchBox
+              className={styles.searchBox}
+              setSiteSearch={setSiteSearch}
+              setCategory={setCategory}
+              setHeaderOfProducts={setHeaderOfProducts}
+              searchValue={searchValue}
+              setSearchValue={setSearchValue}
+              setPageLoading={setPageLoading}
+              setProducts={setProducts}
+            />
+            <DeleteOutlined
+            className={styles.removeButton}
+              style={{
+                lineHeight: "100%",
+                fontSize: "20px",
+                cursor: "pointer",
+              }}
+              onClick={() => {
+                setProducts([]);
+                setCategory("default");
+                setSiteSearch("default");
+              }}
+            />
           </div>
 
           <div>
-            <h2>{category}</h2>
+            <h2>{products.length > 0 && headerOfProducts}</h2>
+            {!products.length && (
+              <Card title="Welcome">
+                Please select a category and platform or search a product on the
+                searchbox to show products
+              </Card>
+            )}
             <Row gutter={[16, 16]}>
               {products?.map((product) => {
                 return (
@@ -139,7 +184,6 @@ export async function getServerSideProps() {
   try {
     await dbConnect();
     const res = await Search.find({});
-    console.log("resultados db", res);
     return { props: { Search: 123 } };
   } catch (error) {
     console.log("error", error);

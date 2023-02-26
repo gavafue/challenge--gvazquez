@@ -7,16 +7,19 @@ export default async function handler(req, res) {
   await dbConnect();
   const method = req.method;
   switch (method) {
-    // Handling POST requests
+    // Handling GET requests
     case "POST":
       try {
-        // Creating a new Search document with the provided request body
-        const newSearch = await Search.create(req.body);
-        // Returning success response with the newly created document
+        // Creating a regular expression with case-insensitive search for the provided search string
+        const regex = new RegExp(req.body.search, "i");
+        // Finding all documents in Search collection matching the regular expression
+        const previouslySearch = await Search.find({ searchInput: regex });
+        // If search results found, returning success response with data
+
         return res.status(200).json({
           success: true,
-          data: newSearch,
-          message: "New search saved successfully.",
+          data: previouslySearch,
+          message: "Search successful.",
         });
       } catch (error) {
         // If any error occurs, returning error response
@@ -24,7 +27,6 @@ export default async function handler(req, res) {
           .status(400)
           .json({ success: false, message: "Bad request." + error });
       }
-    // Handling all other requests
     default:
       // Returning error response for invalid request methods
       return res

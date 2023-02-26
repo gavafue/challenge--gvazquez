@@ -9,6 +9,8 @@ export const TVMELI = "MLA1000";
 const MELICategoriesLink =
   "https://api.mercadolibre.com/sites/MLA/search?category=";
 
+const MELISearchBox = "https://api.mercadolibre.com/sites/MLA/search?q=";
+
 /**
  * Returns an array of products based on the specified category ID.
  * @param {string} idCategory - The ID of the MercadoLibre category.
@@ -24,6 +26,16 @@ export const getProductsByCategoryMELI = async (idCategory) => {
   }
 };
 
+export const getProductsBySearchInput = async (inputValue) => {
+  try {
+    const products = await axios.get(`${MELISearchBox}${inputValue}`);
+    return products.data.results;
+  } catch (error) {
+    console.error(error);
+    return [];
+  }
+};
+
 /**
  * Returns the plain text description of a product based on the specified product ID.
  * @param {string} productId - The ID of the MercadoLibre product.
@@ -32,10 +44,12 @@ export const getProductsByCategoryMELI = async (idCategory) => {
 export const getDescriptionProductMELI = async (productId) => {
   try {
     const response = await axios.get(
-      `https://api.mercadolibre.com/items/${productId}/description`
+      `https://api.mercadolibre.com/items/${productId}/description`,
+      { validateStatus: false }
     );
-    return response.data.plain_text;
+    return response.data.plain_text || "Description not avaiable";
   } catch (error) {
     console.error(error);
+    return [];
   }
 };
