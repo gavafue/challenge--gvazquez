@@ -1,10 +1,7 @@
 import React from "react";
 import { Card } from "antd";
 import { useEffect, useState } from "react";
-import {
-  getProductDescription,
-  getCategoryName,
-} from "@/lib/MELIendpointsAPI";
+import { getProductDescription, getCategoryName } from "@/lib/MELIendpointsAPI";
 import { Button } from "antd";
 import Image from "next/legacy/image";
 import buscape_logo from "../assets/buscape_logo.png";
@@ -25,7 +22,7 @@ const ProductCard = ({ product }) => {
         setNameOfCategory(categoryName);
       })
       .catch((error) => console.error(error));
-  }, [productId, site]);
+  }, [productId, site, category_id]);
   return (
     <Card
       hoverable
@@ -41,8 +38,9 @@ const ProductCard = ({ product }) => {
         </>
       }
       actions={[
-        price,
+        <p key="55">{price}</p>,
         <Button
+          key="56"
           className="buttonCardProduct"
           style={{ color: "white !important" }}
           type="primary"
@@ -50,7 +48,7 @@ const ProductCard = ({ product }) => {
         >
           <ShoppingCartOutlined />
         </Button>,
-        <HeartOutlined />,
+        <HeartOutlined key="57" />,
       ]}
     >
       <div className="iconSite">

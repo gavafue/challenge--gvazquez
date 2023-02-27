@@ -16,9 +16,9 @@ import { DeleteOutlined } from "@ant-design/icons";
 // Import custom functions
 import {
   getProductsByCategory,
-  CELLPHONES_CATEGORY_MELI ,
-  REFRIGERATOR_CATEGORY_MELI ,
-  TV_CATEGORY_MELI ,
+  CELLPHONES_CATEGORY_MELI,
+  REFRIGERATOR_CATEGORY_MELI,
+  TV_CATEGORY_MELI,
 } from "../lib/MELIendpointsAPI";
 import dbConnect from "./api/dataBaseConection";
 import Search from "../models/Search";
@@ -47,12 +47,13 @@ export default function Home() {
     setProducts(result || []);
     setPageLoading(false);
   };
-  const objectMeliCategoriesID = {
-    Cellphones: CELLPHONES_CATEGORY_MELI ,
-    Refrigerator: REFRIGERATOR_CATEGORY_MELI ,
-    TV: TV_CATEGORY_MELI ,
-  };
+
   useEffect(() => {
+    const objectMeliCategoriesID = {
+      Cellphones: CELLPHONES_CATEGORY_MELI,
+      Refrigerator: REFRIGERATOR_CATEGORY_MELI,
+      TV: TV_CATEGORY_MELI,
+    };
     if (siteSearch === "MELI") {
       const categoryId = objectMeliCategoriesID[category];
       updateProductList(categoryId);
