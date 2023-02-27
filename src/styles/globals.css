@@ -8,7 +8,7 @@
  * 2. Prevent adjustments of font size after orientation changes in iOS.
  */
 
- html {
+html {
   line-height: 1.15; /* 1 */
   -webkit-text-size-adjust: 100%; /* 2 */
 }
@@ -352,10 +352,53 @@ template {
 .uk-margin-remove-body {
   margin: 0;
 }
-
+/*Image of card of products*/
+.ant-card-cover {
+  padding: 50px 0 50px 0;
+  display: flex;
+  justify-content: center;
+}
 .descriptionCard {
   display: -webkit-box;
   -webkit-line-clamp: 4;
   -webkit-box-orient: vertical;
   overflow: hidden;
+  font-size: 13px;
+}
+.buttonCardProduct:hover {
+  transform: scale(1.1);
+}
+.ant-card {
+  transition: 0.4s ease;
+}
+.iconSite {
+  position: absolute !important;
+  top: 14px !important;
+  left: 24px !important;
+}
+
+.ant-card-actions {
+  display: flex;
+}
+
+.ant-card-actions li:first-child {
+  width: 60% !important;
+  color: black;
+}
+
+.ant-card-actions li:nth-child(2),
+.ant-card-actions li:nth-child(3) {
+  width: 20% !important;
+  color: blue;
+  font-size: 30px !important;
+  line-height: 100%;
+}
+.ant-card-actions li:nth-child(2) .anticon-shopping-cart svg {
+  fill: #fff;
+  font-size: 20px;
+}
+
+/*Layout height*/
+section.ant-layout {
+  min-height: 100vh;
 }

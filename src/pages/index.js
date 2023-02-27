@@ -15,10 +15,10 @@ import { DeleteOutlined } from "@ant-design/icons";
 
 // Import custom functions
 import {
-  getProductsByCategoryMELI,
-  cellphonesMELI,
-  refrigeratorMELI,
-  TVMELI,
+  getProductsByCategory,
+  CELLPHONES_CATEGORY_MELI ,
+  REFRIGERATOR_CATEGORY_MELI ,
+  TV_CATEGORY_MELI ,
 } from "../lib/MELIendpointsAPI";
 import dbConnect from "./api/dataBaseConection";
 import Search from "../models/Search";
@@ -41,36 +41,24 @@ export default function Home() {
   const [products, setProducts] = useState([]);
   const [pageLoading, setPageLoading] = useState(undefined);
 
-  // Define a function to retrieve products from the specified category
-  const updateProductList = async (category_id) => {
-    try {
-      setPageLoading(true);
-      const result = await getProductsByCategoryMELI(category_id);
-      setProducts(result);
-    } catch (error) {
-      console.error(error);
-    } finally {
-      setPageLoading(false);
-    }
+  const updateProductList = async (categoryId) => {
+    setPageLoading(true);
+    const result = await getProductsByCategory(categoryId);
+    setProducts(result || []);
+    setPageLoading(false);
   };
-
-  // Define an effect to update the product list when the site or category changes
+  const objectMeliCategoriesID = {
+    Cellphones: CELLPHONES_CATEGORY_MELI ,
+    Refrigerator: REFRIGERATOR_CATEGORY_MELI ,
+    TV: TV_CATEGORY_MELI ,
+  };
   useEffect(() => {
     if (siteSearch === "MELI") {
-      let category_id;
-      switch (category) {
-        case "Cellphones":
-          category_id = cellphonesMELI;
-          break;
-        case "Refrigerator":
-          category_id = refrigeratorMELI;
-          break;
-        case "TV":
-          category_id = TVMELI;
-          break;
-      }
-      updateProductList(category_id);
-    } else setProducts([]);
+      const categoryId = objectMeliCategoriesID[category];
+      updateProductList(categoryId);
+    } else {
+      setProducts([]);
+    }
   }, [siteSearch, category]);
 
   // Define options for the category and site select inputs
@@ -110,6 +98,14 @@ export default function Home() {
     setCategory(value);
     setSearchValue("");
     setHeaderOfProducts(value);
+  };
+
+  //Button to remove all filters
+  const removeFilters = () => {
+    setSearchValue("");
+    setProducts([]);
+    setSiteSearch("");
+    setCategory("");
   };
   return (
     <>
@@ -152,17 +148,13 @@ export default function Home() {
                 fontSize: "20px",
                 cursor: "pointer",
               }}
-              onClick={() => {
-                setProducts([]);
-                setCategory("");
-                setSiteSearch("");
-              }}
+              onClick={() => removeFilters()}
             />
           </div>
 
           <div>
-            <h2>{products.length > 0 && headerOfProducts}</h2>
-            {!products.length && (
+            <h2>{products?.length > 0 && headerOfProducts}</h2>
+            {!products?.length && (
               <Card title="Welcome">
                 Please select a category and platform or search a product on the
                 searchbox to show products
@@ -171,9 +163,8 @@ export default function Home() {
             <Row gutter={[16, 16]}>
               {products?.map((product) => {
                 return (
-                  <Col key={product.id} span={6}>
+                  <Col key={product.id} xs={24} sm={12} md={8} lg={6}>
                     <AntdCard
-                      site={siteSearch}
                       product={{
                         productId: product.id,
                         title: product.title,
@@ -181,7 +172,7 @@ export default function Home() {
                         thumbnail: product.thumbnail,
                         category_id: product.category_id,
                         permalink: product.permalink,
-                        site: siteSearch,
+                        site: siteSearch || "MELI",
                       }}
                     />
                   </Col>

@@ -21,7 +21,6 @@ const AntdSelect = ({
 }) => {
   return (
     <Select
-      style={{ width: 200 }}
       showSearch={showSearch && showSearch}
       className={className}
       value={value || undefined}
