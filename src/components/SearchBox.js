@@ -35,8 +35,8 @@ function SearchBox({
    */
   const handleSearch = async (value) => {
     setPageLoading(true);
-    setCategory("default");
-    setSiteSearch("default");
+    setCategory("");
+    setSiteSearch("");
     setHeaderOfProducts(value);
     try {
       const response = await axios.post("/api/searchOnTheDatabase", {
@@ -46,6 +46,7 @@ function SearchBox({
         setProducts(response.data.data[0].searchListResults);
       } else {
         const results = await getProductsBySearchInput(value);
+        console.log(results);
         setProducts(results);
         const responseAddNewSearchToDatabase = await axios.post(
           "/api/addNewSearchToDatabase",
@@ -54,7 +55,6 @@ function SearchBox({
             searchListResults: results,
           }
         );
-        console.log(responseAddNewSearchToDatabase);
       }
     } catch (error) {
       console.error(error);
@@ -62,7 +62,7 @@ function SearchBox({
       setPageLoading(false);
     }
   };
-  
+
   /**
    * Handles the change event when the user enters a new search value.
    *

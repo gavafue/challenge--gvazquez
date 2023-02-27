@@ -13,3 +13,12 @@
 .removeButton {
   flex: 1;
 }
+
+@media (max-width: 768px) {
+  .searchBox {
+    flex: 8;
+  }
+  .select {
+    flex: 1;
+  }
+}

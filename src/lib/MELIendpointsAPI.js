@@ -1,34 +1,35 @@
 import axios from "axios";
 
 // Constants for MercadoLibre categories
-export const cellphonesMELI = "MLA1055";
-export const refrigeratorMELI = "MLA5726";
-export const TVMELI = "MLA1000";
+export const CELLPHONES_CATEGORY_MELI  = "MLA1055";
+export const REFRIGERATOR_CATEGORY_MELI  = "MLA5726";
+export const TV_CATEGORY_MELI  = "MLA1000";
 
 // Base URL for MercadoLibre search API
-const MELICategoriesLink =
-  "https://api.mercadolibre.com/sites/MLA/search?category=";
 
-const MELISearchBox = "https://api.mercadolibre.com/sites/MLA/search?q=";
-
+const MELI_SEARCH_BOX  = "https://api.mercadolibre.com/sites/MLA/search?q=";
+const MELI_CATEGORY_NAME  = "https://api.mercadolibre.com/categories/";
+const MELI_CATEGORIES_LINK = "https://api.mercadolibre.com/sites/MLA/search?category=";
 /**
  * Returns an array of products based on the specified category ID.
  * @param {string} idCategory - The ID of the MercadoLibre category.
  * @returns {array} - An array of products.
  */
-export const getProductsByCategoryMELI = async (idCategory) => {
+
+export const getProductsByCategory = async (categoryId) => {
   try {
-    const products = await axios.get(MELICategoriesLink + idCategory);
-    return products.data.results;
+    const response = await axios.get(
+      `${MELI_CATEGORIES_LINK}${categoryId}&limit=10&offset=0`
+    );
+    return response.data.results;
   } catch (error) {
     console.error(error);
     return [];
   }
 };
-
 export const getProductsBySearchInput = async (inputValue) => {
   try {
-    const products = await axios.get(`${MELISearchBox}${inputValue}`);
+    const products = await axios.get(`${MELI_SEARCH_BOX }${inputValue}`);
     return products.data.results;
   } catch (error) {
     console.error(error);
@@ -41,13 +42,25 @@ export const getProductsBySearchInput = async (inputValue) => {
  * @param {string} productId - The ID of the MercadoLibre product.
  * @returns {string} - The plain text description of the product.
  */
-export const getDescriptionProductMELI = async (productId) => {
+export const getProductDescription = async (productId) => {
   try {
     const response = await axios.get(
       `https://api.mercadolibre.com/items/${productId}/description`,
       { validateStatus: false }
     );
     return response.data.plain_text || "Description not avaiable";
+  } catch (error) {
+    console.error(error);
+    return [];
+  }
+};
+
+export const getCategoryName = async (categoryID) => {
+  try {
+    const response = await axios.get(`${MELI_CATEGORY_NAME }${categoryID}`, {
+      validateStatus: false,
+    });
+    return response.data.name;
   } catch (error) {
     console.error(error);
     return [];
