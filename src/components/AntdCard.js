@@ -7,21 +7,32 @@ import Image from "next/legacy/image";
 import buscape_logo from "../assets/buscape_logo.png";
 import meli_logo from "../assets/meli_logo.jpg";
 import { ShoppingCartOutlined, HeartOutlined } from "@ant-design/icons";
-const ProductCard = ({ product }) => {
+const ProductCard = ({ product }) => {  console.log(product);
+
+  // State to hold product description and category name
   const [productDescription, setProductDescription] = useState("");
   const [nameOfCategory, setNameOfCategory] = useState("");
+
+  // Destructure product object
   const { title, price, category_id, permalink, productId, thumbnail, site } =
     product;
+
+  // Fetch product description and category name
   useEffect(() => {
-    Promise.all([
-      getProductDescription(productId),
-      getCategoryName(category_id),
-    ])
-      .then(([description, categoryName]) => {
-        setProductDescription(description);
-        setNameOfCategory(categoryName);
-      })
-      .catch((error) => console.error(error));
+    if (site === "MELI") {
+      Promise.all([
+        getProductDescription(productId),
+        getCategoryName(category_id),
+      ])
+        .then(([description, categoryName]) => {
+          setProductDescription(description);
+          setNameOfCategory(categoryName);
+        })
+        .catch((error) => console.error(error));
+    }
+    if (site === "BUSCAPE") {
+      setNameOfCategory(category_id);
+    }
   }, [productId, site, category_id]);
   return (
     <Card
@@ -30,7 +41,10 @@ const ProductCard = ({ product }) => {
         <>
           <Image
             className="imageCardProduct"
-            src={thumbnail}
+            src={
+              thumbnail ||
+              "https://f.fcdn.app/imgs/c10fb0/multiplast.com.uy/multuy/d2fc/original/catalogo/2438_2438_1/2000-2000/azul-francia-azul-francia.jpg"
+            }
             alt={`Image from ${title}`}
             width={120}
             height={120}
