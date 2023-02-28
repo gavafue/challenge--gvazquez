@@ -1,15 +1,16 @@
 import axios from "axios";
 
 // Constants for MercadoLibre categories
-export const CELLPHONES_CATEGORY_MELI  = "MLA1055";
-export const REFRIGERATOR_CATEGORY_MELI  = "MLA5726";
-export const TV_CATEGORY_MELI  = "MLA1000";
+export const CELLPHONES_CATEGORY_MELI = "MLA1055";
+export const REFRIGERATOR_CATEGORY_MELI = "MLA5726";
+export const TV_CATEGORY_MELI = "MLA1000";
 
 // Base URL for MercadoLibre search API
 
-const MELI_SEARCH_BOX  = "https://api.mercadolibre.com/sites/MLA/search?q=";
-const MELI_CATEGORY_NAME  = "https://api.mercadolibre.com/categories/";
-const MELI_CATEGORIES_LINK = "https://api.mercadolibre.com/sites/MLA/search?category=";
+const MELI_SEARCH_BOX = "https://api.mercadolibre.com/sites/MLA/search?q=";
+const MELI_CATEGORY_NAME = "https://api.mercadolibre.com/categories/";
+const MELI_CATEGORIES_LINK =
+  "https://api.mercadolibre.com/sites/MLA/search?category=";
 /**
  * Returns an array of products based on the specified category ID.
  * @param {string} idCategory - The ID of the MercadoLibre category.
@@ -19,9 +20,23 @@ const MELI_CATEGORIES_LINK = "https://api.mercadolibre.com/sites/MLA/search?cate
 export const getProductsByCategory = async (categoryId) => {
   try {
     const response = await axios.get(
-      `${MELI_CATEGORIES_LINK}${categoryId}&limit=10&offset=0`
+      `${MELI_CATEGORIES_LINK}${categoryId}&limit=24`
     );
-    return response.data.results;
+
+    console.log(response);
+    const resultArray = response.data.results.map((product) => {
+      return {
+        id: product.id,
+        category_id: product.categoryID,
+        currency_id: `$ ${product.currency_id}`,
+        title: product.title.trim(),
+        price: product.price,
+        site: "MELI",
+        permalink: product.permalink,
+        thumbnail: product.thumbnail,
+      };
+    });
+    return resultArray;
   } catch (error) {
     console.error(error);
     return [];
@@ -29,8 +44,20 @@ export const getProductsByCategory = async (categoryId) => {
 };
 export const getProductsBySearchInput = async (inputValue) => {
   try {
-    const products = await axios.get(`${MELI_SEARCH_BOX }${inputValue}`);
-    return products.data.results;
+    const products = await axios.get(`${MELI_SEARCH_BOX}${inputValue}`);
+    const resultArray = products.data.results.map((product) => {
+      return {
+        id: product.id,
+        category_id: product.categoryID,
+        currency_id: `$ ${product.currency_id}`,
+        title: product.title.trim(),
+        price: product.price,
+        site: "MELI",
+        permalink: product.permalink,
+        thumbnail: product.thumbnail,
+      };
+    });
+    return resultArray;
   } catch (error) {
     console.error(error);
     return [];
@@ -57,7 +84,7 @@ export const getProductDescription = async (productId) => {
 
 export const getCategoryName = async (categoryID) => {
   try {
-    const response = await axios.get(`${MELI_CATEGORY_NAME }${categoryID}`, {
+    const response = await axios.get(`${MELI_CATEGORY_NAME}${categoryID}&limit=24`, {
       validateStatus: false,
     });
     return response.data.name;

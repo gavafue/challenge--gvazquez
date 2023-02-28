@@ -8,6 +8,7 @@ import buscape_logo from "../assets/buscape_logo.png";
 import meli_logo from "../assets/meli_logo.jpg";
 import { ShoppingCartOutlined, HeartOutlined } from "@ant-design/icons";
 const ProductCard = ({ product }) => {
+  console.log(product);
   const [productDescription, setProductDescription] = useState("");
   const [nameOfCategory, setNameOfCategory] = useState("");
   const { title, price, category_id, permalink, productId, thumbnail, site } =

@@ -150,9 +150,9 @@ export default function Home({ mobiles, refrigerator, TV }) {
               options={siteSelect}
             />
             <SearchBox
-              className={styles.searchBox}
-              setSiteSearch={setSiteSearch}
               setCategory={setCategory}
+              siteSearch={siteSearch}
+              className={styles.searchBox}
               setHeaderOfProducts={setHeaderOfProducts}
               searchValue={searchValue}
               setSearchValue={setSearchValue}
@@ -186,11 +186,11 @@ export default function Home({ mobiles, refrigerator, TV }) {
                       product={{
                         productId: product.id || "",
                         title: product.title || "",
-                        price: product.currency_id + product.price || "",
+                        price: `${product.currency_id}  ${product.price}` || "",
                         thumbnail: product.thumbnail || "",
                         category_id: product.category_id || "",
                         permalink: product.permalink || "",
-                        site: siteSearch,
+                        site: product.site,
                       }}
                     />
                   </Col>

@@ -19,14 +19,14 @@ const { Search } = Input;
  * @returns {JSX.Element} The search box component.
  */
 function SearchBox({
+  setCategory,
   setProducts,
   setPageLoading,
   searchValue,
   setSearchValue,
   setHeaderOfProducts,
-  setSiteSearch,
-  setCategory,
   className,
+  siteSearch,
 }) {
   /**
    * Handles the search event when the user presses enter or clicks the search button.
@@ -36,31 +36,92 @@ function SearchBox({
   const handleSearch = async (value) => {
     setPageLoading(true);
     setCategory("");
-    setSiteSearch("");
     setHeaderOfProducts(value);
-    try {
-      const response = await axios.post("/api/searchOnTheDatabase", {
-        search: value,
-      });
-      if (response.data.data.length > 0) {
-        setProducts(response.data.data[0].searchListResults);
-      } else {
-        const results = await getProductsBySearchInput(value);
-        console.log(results);
-        setProducts(results);
-        const responseAddNewSearchToDatabase = await axios.post(
-          "/api/addNewSearchToDatabase",
-          {
-            searchInput: value,
-            searchListResults: results,
-          }
-        );
+    if (siteSearch === "MELI") {
+      try {
+        const response = await axios.post("/api/searchOnTheDatabase", {
+          search: value,
+          site: "MELI",
+        });
+        if (response.data.data.length > 0) {
+          setProducts(response.data.data[0].searchListResults);
+        } else {
+          const results = await getProductsBySearchInput(value);
+          setProducts(results);
+          const responseAddNewSearchToDatabase = await axios.post(
+            "/api/addNewSearchToDatabase",
+            {
+              searchInput: value,
+              site: "MELI",
+              searchListResults: results,
+            }
+          );
+        }
+      } catch (error) {
+        console.error(error);
       }
-    } catch (error) {
-      console.error(error);
-    } finally {
-      setPageLoading(false);
     }
+    if (siteSearch === "BUSCAPE") {
+      try {
+        const response = await axios.post("/api/searchOnTheDatabase", {
+          search: value,
+          site: "BUSCAPE",
+        });
+        if (response.data.data.length > 0) {
+          setProducts(response.data.data[0].searchListResults);
+        } else {
+          const response = await axios.post("/api/searchOnAllBuscapeProducts", {
+            searchInput: value,
+          });
+          const data = response.data.data;
+
+          setProducts(data);
+          const responseAddNewSearchToDatabase = await axios.post(
+            "/api/addNewSearchToDatabase",
+            {
+              searchInput: value,
+              site: "BUSCAPE",
+              searchListResults: results,
+            }
+          );
+        }
+      } catch (e) {
+        console.error(e);
+      }
+    } else {
+      try {
+        const response = await axios.post("/api/searchOnTheDatabase", {
+          search: value,
+        });
+        if (response.data.data.length > 0) {
+          setProducts(response.data.data[0].searchListResults);
+        } else {
+          const responseBuscape = await axios.post(
+            "/api/searchOnAllBuscapeProducts",
+            {
+              searchInput: value,
+              site: "ANY",
+            }
+          );
+          const data = responseBuscape.data.data;
+          const responseMELI = await getProductsBySearchInput(value);
+          const joinArrays = data.concat(responseMELI);
+          const result = joinArrays;
+          setProducts(result);
+          const responseAddNewSearchToDatabase = await axios.post(
+            "/api/addNewSearchToDatabase",
+            {
+              searchInput: value,
+              site: "ANY",
+              searchListResults: result,
+            }
+          );
+        }
+      } catch (e) {
+        console.error(e);
+      }
+    }
+    setPageLoading(false);
   };
 
   /**
@@ -69,6 +130,7 @@ function SearchBox({
    * @param {Event} e - The change event.
    */
   const handleChange = (e) => {
+    setCategory("");
     setSearchValue(e.target.value);
   };
 
