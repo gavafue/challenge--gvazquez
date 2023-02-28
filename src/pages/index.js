@@ -28,9 +28,10 @@ import { useState, useEffect } from "react";
 
 // Import CSS styles
 import styles from "../styles/menuSearch.module.css";
+import axios from "axios";
 
 // Define the Home component
-export default function Home() {
+export default function Home({ mobiles, refrigerator, TV }) {
   // Define state variables for the search form
   const [siteSearch, setSiteSearch] = useState("");
   const [category, setCategory] = useState("");
@@ -40,11 +41,26 @@ export default function Home() {
   // Define state variables for the product list
   const [products, setProducts] = useState([]);
   const [pageLoading, setPageLoading] = useState(undefined);
-
-  const updateProductList = async (categoryId) => {
+  const updateProductList = async (categoryId, site) => {
     setPageLoading(true);
-    const result = await getProductsByCategory(categoryId);
-    setProducts(result || []);
+    if (site === "MELI") {
+      const result = await getProductsByCategory(categoryId);
+      setProducts(result || []);
+    }
+    if (site === "BUSCAPE") {
+      if (category === "Cellphones") {
+        const result = await axios.get("/api/getCellphonesBuscape");
+        setProducts(result.data.data || []);
+      }
+      if (category === "TV") {
+        const result = await axios.get("/api/getTVBuscape");
+        setProducts(result.data.data || []);
+      }
+      if (category === "Refrigerator") {
+        const result = await axios.get("/api/getRefrigeratorsBuscape");
+        setProducts(result.data.data || []);
+      }
+    }
     setPageLoading(false);
   };
 
@@ -56,9 +72,10 @@ export default function Home() {
     };
     if (siteSearch === "MELI") {
       const categoryId = objectMeliCategoriesID[category];
-      updateProductList(categoryId);
-    } else {
-      setProducts([]);
+      updateProductList(categoryId, "MELI");
+    }
+    if (siteSearch === "BUSCAPE") {
+      updateProductList("", "BUSCAPE");
     }
   }, [siteSearch, category]);
 
@@ -164,16 +181,16 @@ export default function Home() {
             <Row gutter={[16, 16]}>
               {products?.map((product) => {
                 return (
-                  <Col key={product.id} xs={24} sm={12} md={8} lg={6}>
+                  <Col key={product.id + 1} xs={24} sm={12} md={8} lg={6}>
                     <AntdCard
                       product={{
-                        productId: product.id,
-                        title: product.title,
-                        price: `$ ${product.currency_id} ${product.price}`,
-                        thumbnail: product.thumbnail,
-                        category_id: product.category_id,
-                        permalink: product.permalink,
-                        site: siteSearch || "MELI",
+                        productId: product.id || "",
+                        title: product.title || "",
+                        price: product.currency_id + product.price || "",
+                        thumbnail: product.thumbnail || "",
+                        category_id: product.category_id || "",
+                        permalink: product.permalink || "",
+                        site: siteSearch,
                       }}
                     />
                   </Col>
@@ -199,7 +216,7 @@ export async function getServerSideProps() {
     // Retrieve data from the "Search" collection
     const res = await Search.find({});
     // Return the "Search" data as a prop
-    return { props: { Search: JSON.stringify(res) } };
+    return { props: {} };
   } catch (error) {
     // Log any errors that occur and return an empty object to ensure something is returned even if an error occurs
     console.log("Error:", error);

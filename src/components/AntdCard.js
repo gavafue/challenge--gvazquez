@@ -13,15 +13,20 @@ const ProductCard = ({ product }) => {
   const { title, price, category_id, permalink, productId, thumbnail, site } =
     product;
   useEffect(() => {
-    Promise.all([
-      getProductDescription(productId),
-      getCategoryName(category_id),
-    ])
-      .then(([description, categoryName]) => {
-        setProductDescription(description);
-        setNameOfCategory(categoryName);
-      })
-      .catch((error) => console.error(error));
+    if (site === "MELI") {
+      Promise.all([
+        getProductDescription(productId),
+        getCategoryName(category_id),
+      ])
+        .then(([description, categoryName]) => {
+          setProductDescription(description);
+          setNameOfCategory(categoryName);
+        })
+        .catch((error) => console.error(error));
+    }
+    if (site === "BUSCAPE") {
+      setNameOfCategory(category_id);
+    }
   }, [productId, site, category_id]);
   return (
     <Card
@@ -30,7 +35,10 @@ const ProductCard = ({ product }) => {
         <>
           <Image
             className="imageCardProduct"
-            src={thumbnail}
+            src={
+              thumbnail ||
+              "https://f.fcdn.app/imgs/c10fb0/multiplast.com.uy/multuy/d2fc/original/catalogo/2438_2438_1/2000-2000/azul-francia-azul-francia.jpg"
+            }
             alt={`Image from ${title}`}
             width={120}
             height={120}
