@@ -64,10 +64,12 @@ export const getProductsBySearchInput = async (inputValue) => {
   }
 };
 
+
 /**
- * Returns the plain text description of a product based on the specified product ID.
- * @param {string} productId - The ID of the MercadoLibre product.
- * @returns {string} - The plain text description of the product.
+ * Retrieves the description for a given product ID from the Mercado Libre API
+ *
+ * @param {string} productId - the ID of the product to retrieve the description for
+ * @returns {string} - the plain text description of the product, or a message indicating that the description is not available
  */
 export const getProductDescription = async (productId) => {
   try {
@@ -75,13 +77,19 @@ export const getProductDescription = async (productId) => {
       `https://api.mercadolibre.com/items/${productId}/description`,
       { validateStatus: false }
     );
-    return response.data.plain_text || "Description not avaiable";
+    return response.data.plain_text || "Description not available";
   } catch (error) {
     console.error(error);
     return [];
   }
 };
 
+/**
+ * Retrieves the name of the category for a given category ID from the Mercado Libre API
+ *
+ * @param {string} categoryID - the ID of the category to retrieve the name for
+ * @returns {string} - the name of the category, or an empty array if the category name could not be retrieved
+ */
 export const getCategoryName = async (categoryID) => {
   try {
     const response = await axios.get(`${MELI_CATEGORY_NAME}${categoryID}&limit=24`, {

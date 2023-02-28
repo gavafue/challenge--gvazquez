@@ -8,11 +8,11 @@ import buscape_logo from "../assets/buscape_logo.png";
 import meli_logo from "../assets/meli_logo.jpg";
 import { ShoppingCartOutlined, HeartOutlined } from "@ant-design/icons";
 const ProductCard = ({ product }) => {
-  console.log(product);
   const [productDescription, setProductDescription] = useState("");
   const [nameOfCategory, setNameOfCategory] = useState("");
   const { title, price, category_id, permalink, productId, thumbnail, site } =
     product;
+
   useEffect(() => {
     if (site === "MELI") {
       Promise.all([
@@ -27,6 +27,7 @@ const ProductCard = ({ product }) => {
     }
     if (site === "BUSCAPE") {
       setNameOfCategory(category_id);
+      console.log("category id", category_id);
     }
   }, [productId, site, category_id]);
   return (
