@@ -1,10 +1,22 @@
-// Constants to define the categories of products being fetched
+import axios from "axios";
+import * as cheerio from "cheerio";
 const BUSCAPE_URL = "https://www.buscape.com.br";
+
 const CATEGORY_CELLPHONES = "Cellphones";
 const CATEGORY_TV = "TV";
 const CATEGORY_REFRIGERATOR = "Refrigerator";
 
-// Function to fetch mobile phones from Buscape
+// This function is used to get mobiles from
+//  Buscape. It uses axios and cheerio to make a
+//  GET request to the Buscape URL for celular,
+//  then parses the response data using cheerio.
+//  It loops through each div with data-testid
+//  "product-card" and creates an object with
+//  the product information such as name, price, thumbnail,
+//   category_id, currency_id and permalink. The objects are
+//   then pushed into an array and returned. If there is an error it
+//   will throw a new Error with a message.
+
 export const getMobilesBuscape = async () => {
   const url = `${BUSCAPE_URL}/celular`;
   try {
@@ -12,7 +24,6 @@ export const getMobilesBuscape = async () => {
     const $ = cheerio.load(response.data);
     const mobiles = [];
 
-    // Extract data for each mobile phone product
     $('div[data-testid="product-card"]').each((i, el) => {
       const link = $(el)
         .find('a[data-testid="product-card::card"]')
@@ -22,16 +33,15 @@ export const getMobilesBuscape = async () => {
       const thumbnail = $(el)
         .find('div[data-testid="product-card::image"] span img')
         .attr("src");
-
-      // Push the extracted data as an object into the mobiles array
       mobiles.push({
-        id: Math.random(),
+        id: i,
         title: name.trim(),
         price: price.trim(),
         thumbnail,
         category_id: CATEGORY_CELLPHONES,
         currency_id: "",
         permalink: `${BUSCAPE_URL}${link}`,
+        site: "BUSCAPE",
       });
     });
 
@@ -42,7 +52,13 @@ export const getMobilesBuscape = async () => {
   }
 };
 
-// Function to fetch refrigerators from Buscape
+// This function is an asynchronous function that uses axios and cheerio to get refrigerator
+// data from Buscape. It makes a GET request to the BUSCAPE_URL with the path '/geladeira'
+// and then uses cheerio to parse the response data. It then loops through each
+// 'div[data-testid="product-card"]' element, extracting the link, name, price,
+// and thumbnail of each refrigerator. Finally, it returns an array of refrigerators with
+//  their respective information.
+
 export const getRefrigeratorBuscape = async () => {
   const url = `${BUSCAPE_URL}/geladeira`;
   try {
@@ -50,7 +66,6 @@ export const getRefrigeratorBuscape = async () => {
     const $ = cheerio.load(response.data);
     const refrigerators = [];
 
-    // Extract data for each refrigerator product
     $('div[data-testid="product-card"]').each((i, el) => {
       const link = $(el)
         .find('a[data-testid="product-card::card"]')
@@ -60,16 +75,15 @@ export const getRefrigeratorBuscape = async () => {
       const thumbnail = $(el)
         .find('div[data-testid="product-card::image"] span img')
         .attr("src");
-
-      // Push the extracted data as an object into the refrigerators array
       refrigerators.push({
-        id: Math.random(),
+        id: i,
         category_id: CATEGORY_REFRIGERATOR,
         currency_id: "",
         title: name.trim(),
         price: price.trim(),
         permalink: `${BUSCAPE_URL}${link}`,
         thumbnail,
+        site: "BUSCAPE",
       });
     });
 
@@ -80,19 +94,21 @@ export const getRefrigeratorBuscape = async () => {
   }
 };
 
-// Get all TVs from Buscape
+// This code is an asynchronous function that uses the axios and cheerio libraries to fetch TVs
+// from Buscape. It first defines the url, then uses axios.get() to make a request to the url.
+// It then uses cheerio.load() to parse the response data, and creates an array of TVs.
+// For each element in the array, it finds the link, name, price, and thumbnail of each
+// TV and pushes it into the TVs array as an object with its corresponding values. Finally,
+// it returns the TVs array. If there is an error in making the request or parsing the response
+//  data, it will throw an error message "Failed to fetch TVs from Buscape."
+
 export const getTVBuscape = async () => {
-  // Create the URL for TVs
   const url = `${BUSCAPE_URL}/tv`;
   try {
-    // Fetch the HTML page for TVs
     const response = await axios.get(url);
-    // Load the HTML page using cheerio
     const $ = cheerio.load(response.data);
-    // Create an array to store the TVs
     const TVs = [];
 
-    // Loop through each product card and extract the data
     $('div[data-testid="product-card"]').each((i, el) => {
       const link = $(el)
         .find('a[data-testid="product-card::card"]')
@@ -102,40 +118,40 @@ export const getTVBuscape = async () => {
       const thumbnail = $(el)
         .find('div[data-testid="product-card::image"] span img')
         .attr("src");
-      // Add the TV data to the array
       TVs.push({
-        id: Math.random(),
+        id: i,
         category_id: CATEGORY_TV,
         currency_id: "",
         title: name.trim(),
         price: price.trim(),
         permalink: `${BUSCAPE_URL}${link}`,
         thumbnail,
+        site: "BUSCAPE",
       });
     });
 
-    // Return the array of TVs
     return TVs;
   } catch (error) {
-    // Handle any errors and throw an error
     console.error(error);
     throw new Error("Failed to fetch TVs from Buscape.");
   }
 };
 
-// Search for products on Buscape
+// This code is an asynchronous function that uses the axios and cheerio libraries to search
+// for products on the Buscape website. It takes a searchValue parameter and returns an array
+// of objects containing product information. The function first creates a URL based on the
+//  searchValue parameter, then it uses axios to make a GET request to the URL.
+//  The response data is then loaded into cheerio, which is used to select elements from the
+//  page and extract product information such as name, price, link, and thumbnail.
+//  This information is stored in an array of objects which is then returned by the function.
+
 export const getBuscapeSearch = async (searchValue) => {
-  // Create the URL for the search
-  const url = `${BUSCAPE_URL}/search?q=${searchValue}`;
+  const url = `https://www.buscape.com.br/search?q=${searchValue}`;
   try {
-    // Fetch the HTML page for the search
     const response = await axios.get(url);
-    // Load the HTML page using cheerio
     const $ = cheerio.load(response.data);
-    // Create an array to store the products
     const productsSearched = [];
 
-    // Loop through each product card and extract the data
     $('div[data-testid="product-card"]').each((i, el) => {
       const link = $(el)
         .find('a[data-testid="product-card::card"]')
@@ -145,23 +161,21 @@ export const getBuscapeSearch = async (searchValue) => {
       const thumbnail = $(el)
         .find('div[data-testid="product-card::image"] span img')
         .attr("src");
-      // Add the product data to the array
       productsSearched.push({
-        id: Math.random(),
+        id: i,
         category_id: "",
         currency_id: "",
         title: name.trim(),
         price: price.trim(),
         permalink: `${BUSCAPE_URL}${link}`,
         thumbnail,
+        site: "BUSCAPE",
       });
     });
 
-    // Return the array of products
     return productsSearched;
   } catch (error) {
-    // Handle any errors and throw an error
     console.error(error);
-    throw new Error("Failed to fetch products from Buscape.");
+    throw new Error("Failed to fetch TVs from Buscape.");
   }
 };
