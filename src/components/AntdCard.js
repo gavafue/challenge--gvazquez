@@ -7,17 +7,12 @@ import Image from "next/legacy/image";
 import buscape_logo from "../assets/buscape_logo.png";
 import meli_logo from "../assets/meli_logo.jpg";
 import { ShoppingCartOutlined, HeartOutlined } from "@ant-design/icons";
-const ProductCard = ({ product }) => {  console.log(product);
-
-  // State to hold product description and category name
+const ProductCard = ({ product }) => {
+  console.log(product);
   const [productDescription, setProductDescription] = useState("");
   const [nameOfCategory, setNameOfCategory] = useState("");
-
-  // Destructure product object
   const { title, price, category_id, permalink, productId, thumbnail, site } =
     product;
-
-  // Fetch product description and category name
   useEffect(() => {
     if (site === "MELI") {
       Promise.all([
