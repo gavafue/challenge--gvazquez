@@ -41,6 +41,7 @@ export default function Home({ mobiles, refrigerator, TV }) {
   // Define state variables for the product list
   const [products, setProducts] = useState([]);
   const [pageLoading, setPageLoading] = useState(undefined);
+
   const updateProductList = async (categoryId, site) => {
     setPageLoading(true);
     if (site === "MELI") {
@@ -81,30 +82,14 @@ export default function Home({ mobiles, refrigerator, TV }) {
 
   // Define options for the category and site select inputs
   const categoriesSelect = [
-    {
-      value: "Cellphones",
-      label: "Cellphones",
-    },
-    {
-      value: "Refrigerator",
-      label: "Refrigerator",
-    },
-    {
-      value: "TV",
-      label: "TV",
-    },
+    { value: "Cellphones", label: "Cellphones" },
+    { value: "Refrigerator", label: "Refrigerator" },
+    { value: "TV", label: "TV" },
   ];
-
   const siteSelect = [
-    {
-      value: "MELI",
-      label: "Free Market",
-    },
-    {
-      value: "BUSCAPE",
-      label: "Buscapé",
-      disabled: true,
-    },
+    { value: "MELI", label: "Free Market" },
+    { value: "BUSCAPE", label: "Buscapé" },
+    { value: "ANY", label: "All" },
   ];
 
   // Define event handlers for the category and site select inputs
@@ -169,7 +154,6 @@ export default function Home({ mobiles, refrigerator, TV }) {
               onClick={() => removeFilters()}
             />
           </div>
-
           <div>
             <h2>{products?.length > 0 && headerOfProducts}</h2>
             {!products?.length && (

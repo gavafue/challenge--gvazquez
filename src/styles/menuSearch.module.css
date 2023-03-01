@@ -13,12 +13,25 @@
 .removeButton {
   flex: 1;
 }
-
-@media (max-width: 768px) {
-  .searchBox {
-    flex: 8;
+@media (max-width: 560px) {
+  .menu {
+    flex-wrap: wrap;
   }
-  .select {
+  .select:first-child {
+    flex: 2;
+  }
+  .select:last-child {
+    flex: 2;
+  }
+  .removeButton {
     flex: 1;
+  }
+  .searchBox {
+    flex-basis: 90%;
+  }
+}
+@media (max-width: 420px) {
+  .searchBox {
+    flex-basis: 70%;
   }
 }

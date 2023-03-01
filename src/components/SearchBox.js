@@ -88,7 +88,8 @@ function SearchBox({
       } catch (e) {
         console.error(e);
       }
-    } else {
+    }
+    if (siteSearch === "ANY") {
       try {
         const response = await axios.post("/api/searchOnTheDatabase", {
           search: value,
