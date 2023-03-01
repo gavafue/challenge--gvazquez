@@ -27,7 +27,6 @@ const ProductCard = ({ product }) => {
     }
     if (site === "BUSCAPE") {
       setNameOfCategory(category_id);
-      console.log("category id", category_id);
     }
   }, [productId, site, category_id]);
   return (

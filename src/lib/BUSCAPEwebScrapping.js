@@ -176,6 +176,6 @@ export const getBuscapeSearch = async (searchValue) => {
     return productsSearched;
   } catch (error) {
     console.error(error);
-    throw new Error("Failed to fetch TVs from Buscape.");
+    throw new Error("Failed to search on Buscape.");
   }
 };

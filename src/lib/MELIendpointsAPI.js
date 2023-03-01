@@ -22,8 +22,6 @@ export const getProductsByCategory = async (categoryId) => {
     const response = await axios.get(
       `${MELI_CATEGORIES_LINK}${categoryId}&limit=24`
     );
-
-    console.log(response);
     const resultArray = response.data.results.map((product) => {
       return {
         id: product.id,
@@ -42,6 +40,11 @@ export const getProductsByCategory = async (categoryId) => {
     return [];
   }
 };
+/**
+ * Returns an array of products based on the specified search input value
+ * @param {string} inputValue - Te input value of the searchbox
+ * @returns {array} - An array of products.
+ */
 export const getProductsBySearchInput = async (inputValue) => {
   try {
     const products = await axios.get(`${MELI_SEARCH_BOX}${inputValue}`);

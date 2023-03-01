@@ -131,6 +131,10 @@ export default function Home({ mobiles, refrigerator, TV }) {
         <Head>
           <title>Gavafue - Free Market</title>
           <link rel="icon" href="/favicon.ico" />
+          <link
+            href="https://fonts.googleapis.com/css?family=Roboto"
+            rel="stylesheet"
+          />
         </Head>
 
         <AntdLayout>
@@ -219,7 +223,7 @@ export async function getServerSideProps() {
     return { props: {} };
   } catch (error) {
     // Log any errors that occur and return an empty object to ensure something is returned even if an error occurs
-    console.log("Error:", error);
+    console.error("Error:", error);
     return { props: {} };
   }
 }

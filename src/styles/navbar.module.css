@@ -1,3 +1,7 @@
 .title {
   color: white;
+  letter-spacing: 1px;
+  font-variant: small-caps;
+  font-size: 20px;
+  text-shadow: 2px 2px 2px #bdaba5;
 }
