@@ -131,10 +131,6 @@ export default function Home({ mobiles, refrigerator, TV }) {
         <Head>
           <title>Gavafue - Free Market</title>
           <link rel="icon" href="/favicon.ico" />
-          <link
-            href="https://fonts.googleapis.com/css?family=Roboto"
-            rel="stylesheet"
-          />
         </Head>
 
         <AntdLayout>
