@@ -36,6 +36,7 @@ const ProductCard = ({ product }) => {
         <>
           <Image
             className="imageCardProduct"
+            loading="lazy"
             src={
               thumbnail ||
               "https://f.fcdn.app/imgs/c10fb0/multiplast.com.uy/multuy/d2fc/original/catalogo/2438_2438_1/2000-2000/azul-francia-azul-francia.jpg"
@@ -51,7 +52,7 @@ const ProductCard = ({ product }) => {
         <Button
           key="56"
           className="buttonCardProduct"
-          style={{ color: "white !important" }}
+          style={{ color: "white !important"}}
           type="primary"
           href={permalink}
         >
@@ -62,6 +63,7 @@ const ProductCard = ({ product }) => {
     >
       <div className="iconSite">
         <Image
+          loading="lazy"
           src={site === "MELI" ? meli_logo : buscape_logo}
           alt={`Logo from website`}
           width={40}

@@ -1,7 +1,18 @@
 .title {
   color: white;
+  position: absolute;
   letter-spacing: 1px;
+  margin-top: 130px;
+  right: 20px;
+  text-align: right !important;
+  font-feature-settings: "smcp";
   font-variant: small-caps;
-  font-size: 20px;
-  text-shadow: 2px 2px 2px #bdaba5;
+  font-size: 25px;
+  text-shadow: 1px 1px 2px #bdaba5;
+  width: 300px;
+}
+@media (max-width: 460px) {
+  .title {
+    width: 100px;
+    margin-top: 10px;  }
 }

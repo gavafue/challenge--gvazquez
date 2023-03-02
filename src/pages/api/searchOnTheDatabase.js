@@ -13,7 +13,10 @@ export default async function handler(req, res) {
         // Creating a regular expression with case-insensitive search for the provided search string
         const regex = new RegExp(req.body.search, "i");
         // Finding all documents in Search collection matching the regular expression
-        const previouslySearch = await Search.find({ searchInput: regex });
+        const previouslySearch = await Search.find({
+          searchInput: regex,
+          site: req.site,
+        });
         // If search results found, returning success response with data
 
         return res.status(200).json({
